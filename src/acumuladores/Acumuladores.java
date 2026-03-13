@@ -14,8 +14,43 @@ public class Acumuladores {
 	 * @return
 	 */
 	public boolean todosMultiplosEnAlgunaFila(int[][] mat, int num) { 
-		throw new RuntimeException("Metodo no implementado aun!!!");
+		boolean acumulador = false;
+
+
+		if ( mat == null || mat.length == 0) {
+			return false;
+		}
+
+		for (int i=0; i<mat.length; i++) {
+			acumulador = acumulador || filaConTodosElemMultiplos(mat[i], num);
+		}
+		return acumulador;
 	}
+
+	public boolean filaConTodosElemMultiplos(int[] fila, int num) {
+		boolean acumulador = true;
+
+		for(int i=0; i<fila; i++) {
+			acumulador = acumulador && esMultiplo(fila[i], num);
+		}
+
+		return acumulador;
+	}
+
+
+	public boolean esMultiplo(int num, int numrecibido) {
+		return num % numrecibido == 0;
+	}
+
+	public boolean esNegativo()
+
+
+
+
+
+
+
+
 	
 	/**
 	 * Dado 2 matrices se verifica si hay intersección entre las filas de cada
