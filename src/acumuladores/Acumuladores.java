@@ -16,41 +16,40 @@ public class Acumuladores {
 	public boolean todosMultiplosEnAlgunaFila(int[][] mat, int num) { 
 		boolean acumulador = false;
 
-
-		if ( mat == null || mat.length == 0) {
+		if ( estaVacia(mat) || esNegativo(num)) {
 			return false;
 		}
 
 		for (int i=0; i<mat.length; i++) {
 			acumulador = acumulador || filaConTodosElemMultiplos(mat[i], num);
+
+			//agrego esta comprobacion solo para salir y no itere innecesariamente una vez haya encontrado una fila
+			if (acumulador) {
+				break;
+			}
 		}
 		return acumulador;
 	}
 
 	public boolean filaConTodosElemMultiplos(int[] fila, int num) {
 		boolean acumulador = true;
-
-		for(int i=0; i<fila; i++) {
+		for(int i=0; i<fila.length; i++) {
 			acumulador = acumulador && esMultiplo(fila[i], num);
 		}
-
 		return acumulador;
 	}
 
+	public boolean estaVacia(int[][]mat) {
+		return mat==null || mat.length == 0;
+	}
+
+	public boolean esNegativo(int num) {
+		return num<=0;
+	}
 
 	public boolean esMultiplo(int num, int numrecibido) {
 		return num % numrecibido == 0;
 	}
-
-	public boolean esNegativo()
-
-
-
-
-
-
-
-
 	
 	/**
 	 * Dado 2 matrices se verifica si hay intersección entre las filas de cada
@@ -64,9 +63,54 @@ public class Acumuladores {
 	 * @return
 	 */
 	public boolean hayInterseccionPorFila(int[][] mat1, int[][]mat2) { 
-		throw new RuntimeException("Metodo no implementado aun!!!");
+		boolean acumulador=true;
+
+		if ((estaVacia(mat1) || estaVacia(mat2)) || tienenDistintasDimensiones(mat1, mat2)) {
+			return false;
+		}
+
+		for (int i=0; i< mat1.length; i++) {
+			acumulador = acumulador && verificarInterseccion(mat1[i],mat2[i]);
+		}
+
+		if(!acumulador) {
+			return false;
+		}
+
+        return acumulador;
 	}
-	
+
+
+	public boolean tienenDistintasDimensiones(int[][]mat1, int[][]mat2) {
+		return mat1.length != mat2.length;
+	}
+
+	public boolean sonNumIguales(int num1, int num2) {
+		return num1==num2;
+	}
+
+	public boolean verificarInterseccion(int[]filamat1, int[]filamat2) {
+		boolean acumulador = false;
+
+		for (int i=0; i<filamat1.length; i++) {
+			acumulador = acumulador || filaContieneNum(filamat2, filamat1[i]);
+		}
+
+		return acumulador;
+	}
+
+	public boolean filaContieneNum(int[]fila, int num) {
+		boolean acumulador = false;
+		for (int i=0; i<fila.length; i++) {
+			acumulador = acumulador || sonNumIguales(fila[i], num);
+		}
+		return acumulador;
+	}
+
+
+
+
+
 	/**
 	 * Dada una matriz y el índice de una columna, se verifica si existe alguna
 	 * fila cuya suma de todos sus elementos sea mayor estricto que la suma de
@@ -80,7 +124,46 @@ public class Acumuladores {
 	 * @return
 	 */
 	public boolean algunaFilaSumaMasQueLaColumna(int[][] mat, int nColum) { 
-		throw new RuntimeException("Metodo no implementado aun!!!");
+		boolean acumulador = false;
+
+		if(estaVacia(mat) || !esColumnaValida(mat, nColum)) {
+			return false;
+		}
+		int sumaTotalCol = sumaTotalColumna(mat, nColum);
+
+
+		for(int i=0; i<mat.length; i++) {
+			acumulador = acumulador || (sumaTotalCol < sumaTotalFila(mat[i]));
+
+			if (acumulador) {
+				break;
+			}
+		}
+
+		return acumulador;
+	}
+
+	public int sumaTotalColumna(int[][]mat, int nColumn) {
+		int total=0;
+
+		for (int fila=0; fila<mat.length; fila++) {
+			total+=mat[fila][nColumn];
+		}
+
+		return total;
+	}
+
+	public int sumaTotalFila(int[]filamat) {
+		int total=0;
+
+		for (int i=0; i<filamat.length; i++) {
+			total+=filamat[i];
+		}
+		return total;
+	}
+
+	public boolean esColumnaValida(int[][]mat, int nColumn) {
+		return nColumn>=0 && nColumn<mat[0].length;
 	}
 	
 	/**
@@ -95,6 +178,48 @@ public class Acumuladores {
 	 * @return
 	 */
 	public boolean hayInterseccionPorColumna(int[][] mat1, int[][]mat2) { 
-		throw new RuntimeException("Metodo no implementado aun!!!");
+		boolean acumulador = true;
+		if ((estaVacia(mat1) || estaVacia(mat2)) || tienenDistintasCantColum(mat1,mat2)) {
+			return false;
+		}
+
+		for (int nCol=0; nCol<mat1[0].length; nCol++) {
+			acumulador = acumulador && verificarInterseccionCol(mat1,mat2,nCol);
+		}
+
+		return acumulador;
+
 	}
+
+	public boolean verificarInterseccionCol(int[][]mat1, int[][]mat2, int nCol) {
+		boolean acumulador = false;
+
+		for (int fila=0; fila<mat1.length; fila++) {
+			acumulador = acumulador || columnaContieneNum(mat2, nCol, mat1[fila][nCol]);
+
+			if (acumulador) {
+				break;
+			}
+		}
+		return acumulador;
+	}
+
+	public boolean tienenDistintasCantColum(int[][]mat1, int[][]mat2) {
+		return mat1[0].length != mat2[0].length;
+	}
+
+	public boolean columnaContieneNum(int[][]mat, int nCol, int num) {
+		boolean acumulador = false;
+
+		for (int fila=0; fila<mat.length; fila++) {
+			acumulador = acumulador || sonNumIguales(mat[fila][nCol], num);
+
+			if (acumulador) {
+				break;
+			}
+		}
+
+		return acumulador;
+	}
+
 }
